@@ -1,8 +1,7 @@
-// ChatApp.js
 import { useState, useEffect } from 'react';
 import ChatInput from './ChatInput';
 import MessageList from './MessageList';
-import { getDatabase, ref, push, onValue } from "firebase/database";
+import { getDatabase, ref, push, onValue, update, remove } from "firebase/database";
 import { initializeApp } from "firebase/app";
 
 // Initialize Firebase
@@ -45,11 +44,25 @@ function ChatApp() {
         }
     }
 
+    const handleDelete = (id) => {
+        remove(ref(db, `messages/${id}`));
+    };
+
+    const handleEdit = (id, newText) => {
+        update(ref(db, `messages/${id}`), { text: newText });
+    };
+
     return (
-        <div className="container mx-auto p-4">
-            <h1 className="text-2xl font-bold mb-4">Chat App</h1>
-            <MessageList messages={messages} />
-            <ChatInput onSubmit={handleMessageSubmit} />
+        <div className='h-screen bg-cyan-950 p-10 fixed w-full'>
+            <h1 className='text-center text-white text-3xl font-bold mb-5'>Chat Application</h1>
+            <div className='max-w-5xl mx-auto flex flex-col justify-between h-full pb-10'>
+                <div className='overflow-y-scroll px-5 bg-cyan-900 py-10'>
+                    <MessageList messages={messages} onDelete={handleDelete} onEdit={handleEdit} />
+                </div>
+                <div>
+                    <ChatInput onSubmit={handleMessageSubmit} />
+                </div>
+            </div>
         </div>
     );
 }
